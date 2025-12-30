@@ -178,5 +178,32 @@ function transformText(text: string): string {
         newLines.push(indent + marker + content);
     }
 
-    return newLines.join('\n');
+    let result = newLines.join('\n');
+
+    // 處理結尾網址：如果文字最後是 URL，轉換為 source 格式
+    // 先去除結尾空白來偵測
+    const trimmedResult = result.trimEnd();
+    
+    // 偵測結尾是否為 URL（支援 http 和 https）
+    // 使用較寬鬆的匹配：從最後一個 http(s):// 開始到結尾
+    const trailingUrlMatch = trimmedResult.match(/\n?(https?:\/\/[^\s]+)$/);
+    
+    if (trailingUrlMatch) {
+        const url = trailingUrlMatch[1];
+        // 找到 URL 在 trimmedResult 中的起始位置
+        const urlStartIndex = trimmedResult.lastIndexOf(url);
+        // 取得 URL 之前的內容
+        let beforeUrl = trimmedResult.substring(0, urlStartIndex).trimEnd();
+        
+        // 組合新格式
+        if (beforeUrl.length > 0) {
+            // 有其他內文：內文 + 換行 + --- + 換行 + source: URL
+            result = beforeUrl + '\n---\nsource: ' + url;
+        } else {
+            // 只有網址：直接 --- + 換行 + source: URL
+            result = '---\nsource: ' + url;
+        }
+    }
+
+    return result;
 }
