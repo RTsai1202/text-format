@@ -51,7 +51,8 @@ function transformText(text: string): string {
 
     // Preprocessing: 
     // 1. Remove Object Replacement Character (U+FFFC) and other common garbage
-    text = text.replace(/\uFFFC/g, '');
+    // 有時候 ￼ 後面會跟著 Markdown 標記（如 ##），一併移除
+    text = text.replace(/\uFFFC[#>\-*+]*/g, '');
 
     // 2. Handle existing newlines followed by bullets (Strip indentation)
     // Matches: Newline + optional whitespace (including NBSP/Ideographic) + bullet
@@ -250,6 +251,8 @@ function transformText(text: string): string {
         // 組合新格式
         if (beforeUrl.length > 0) {
             // 有其他內文：內文 + 換行 + --- + 換行 + source: URL
+            // 先清理 beforeUrl 結尾的多餘空行
+            beforeUrl = beforeUrl.replace(/\n+$/, '');
             result = beforeUrl + '\n---\nsource: ' + url;
         } else {
             // 只有網址：直接 --- + 換行 + source: URL
