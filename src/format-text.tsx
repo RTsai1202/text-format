@@ -178,23 +178,75 @@ function transformText(text: string): string {
         newLines.push(indent + marker + content);
     }
 
-    let result = newLines.join('\n');
+    // 處理段落換行：將普通文字之間的單換行轉換為雙換行
+    // 規則：
+    // - 列表項目之間：維持單換行
+    // - 標題後面：改成雙換行
+    // - 引用區塊之間：維持單換行
+    // - 普通段落之間：改成雙換行
+    const processedLines: string[] = [];
+
+    for (let i = 0; i < newLines.length; i++) {
+        const currentLine = newLines[i];
+        const nextLine = newLines[i + 1];
+
+        processedLines.push(currentLine);
+
+        // 如果沒有下一行，跳過
+        if (nextLine === undefined) continue;
+
+        // 如果當前行或下一行是空行，不處理（已經有換行效果）
+        if (currentLine.trim() === '' || nextLine.trim() === '') continue;
+
+        // 判斷行的類型
+        const isCurrentList = /^[\s]*[-*+]\s|^[\s]*\d+[.)]\s/.test(currentLine);
+        const isNextList = /^[\s]*[-*+]\s|^[\s]*\d+[.)]\s/.test(nextLine);
+        const isCurrentBlockquote = /^[\s]*>/.test(currentLine);
+        const isNextBlockquote = /^[\s]*>/.test(nextLine);
+        const isCurrentHeader = /^[\s]*#+\s/.test(currentLine);
+        const isCurrentCodeFence = /^[\s]*```/.test(currentLine);
+        const isNextCodeFence = /^[\s]*```/.test(nextLine);
+
+        // 程式碼區塊：不處理
+        if (isCurrentCodeFence || isNextCodeFence) continue;
+
+        // 列表項目之間：維持單換行（不加空行）
+        if (isCurrentList && isNextList) continue;
+
+        // 引用區塊之間：維持單換行（不加空行）
+        if (isCurrentBlockquote && isNextBlockquote) continue;
+
+        // 標題後面：加空行（雙換行）
+        if (isCurrentHeader) {
+            processedLines.push('');
+            continue;
+        }
+
+        // 普通段落之間：加空行（雙換行）
+        // 條件：當前行和下一行都不是特殊格式
+        if (!isCurrentList && !isNextList &&
+            !isCurrentBlockquote && !isNextBlockquote) {
+            processedLines.push('');
+        }
+    }
+
+    let result = processedLines.join('\n');
 
     // 處理結尾網址：如果文字最後是 URL，轉換為 source 格式
     // 先去除結尾空白來偵測
     const trimmedResult = result.trimEnd();
-    
+
     // 偵測結尾是否為 URL（支援 http 和 https）
     // 使用較寬鬆的匹配：從最後一個 http(s):// 開始到結尾
     const trailingUrlMatch = trimmedResult.match(/\n?(https?:\/\/[^\s]+)$/);
-    
+
     if (trailingUrlMatch) {
         const url = trailingUrlMatch[1];
         // 找到 URL 在 trimmedResult 中的起始位置
         const urlStartIndex = trimmedResult.lastIndexOf(url);
         // 取得 URL 之前的內容
         let beforeUrl = trimmedResult.substring(0, urlStartIndex).trimEnd();
-        
+
         // 組合新格式
         if (beforeUrl.length > 0) {
             // 有其他內文：內文 + 換行 + --- + 換行 + source: URL
