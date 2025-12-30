@@ -251,8 +251,8 @@ function transformText(text: string): string {
         // 組合新格式
         if (beforeUrl.length > 0) {
             // 有其他內文：內文 + 換行 + --- + 換行 + source: URL
-            // 先清理 beforeUrl 結尾的多餘空行
-            beforeUrl = beforeUrl.replace(/\n+$/, '');
+            // 先清理 beforeUrl 結尾的多餘空行和 Markdown 標記（如 ##、>、- 等）
+            beforeUrl = beforeUrl.replace(/[\n\s#>\-*+￼]*$/, '');
             result = beforeUrl + '\n---\nsource: ' + url;
         } else {
             // 只有網址：直接 --- + 換行 + source: URL
