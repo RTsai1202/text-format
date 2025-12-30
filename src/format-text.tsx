@@ -54,24 +54,36 @@ function transformText(text: string): string {
     // 有時候 ￼ 後面會跟著 Markdown 標記（如 ##），一併移除
     text = text.replace(/\uFFFC[#>\-*+]*/g, '');
 
-    // 2. Handle existing newlines followed by bullets (Strip indentation)
+    // 2. 保護 URL（包含 <URL> 格式），避免後續處理誤判
+    const urlPlaceholders: string[] = [];
+    text = text.replace(/<?(https?:\/\/[^\s<>]+)>?/g, (match) => {
+        urlPlaceholders.push(match);
+        return `__URL_PLACEHOLDER_${urlPlaceholders.length - 1}__`;
+    });
+
+    // 3. Handle existing newlines followed by bullets (Strip indentation)
     // Matches: Newline + optional whitespace (including NBSP/Ideographic) + bullet
     // Replaces with: Newline + "- "
     text = text.replace(/(\n)[ \t\u00A0\u3000]*[•・]/g, '$1- ');
 
-    // 3. Handle inline bullets (Missing newlines)
+    // 4. Handle inline bullets (Missing newlines)
     // Matches: Non-newline/non-indent char + optional whitespace + bullet
     // Replaces with: Char + Newline + "- "
     text = text.replace(/([^ \t\n\u00A0\u3000])[ \t\u00A0\u3000]*[•・]/g, '$1\n- ');
 
-    // 4. Handle inline blockquotes
+    // 5. Handle inline blockquotes
     text = text.replace(/([^ \t\n\u00A0\u3000])[ \t\u00A0\u3000]*>/g, '$1\n> ');
 
-    // 5. Handle inline headers
+    // 6. Handle inline headers
     text = text.replace(/([^ \t\n\u00A0\u3000#])[ \t\u00A0\u3000]*(#+\s)/g, '$1\n$2');
 
-    // 6. Handle start of string bullet (Strip indentation)
+    // 7. Handle start of string bullet (Strip indentation)
     text = text.replace(/^[ \t\u00A0\u3000]*[•・]/, '- ');
+
+    // 8. 還原 URL
+    urlPlaceholders.forEach((url, index) => {
+        text = text.replace(`__URL_PLACEHOLDER_${index}__`, url);
+    });
 
     const lines = text.split('\n');
 

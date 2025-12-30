@@ -1,14 +1,28 @@
-# 還是忍不住花一小時多
-把 YouTube 影片轉錄功能做出來了
-使用網友推薦的 Groq Whisper（真的快！）
-然後它可以判斷：
+轉換前：
+# NotebookLM又更新了！
 
-有字幕 → 優先取用，不轉錄
-無字幕 → 通常是中文，轉錄
+全新功能資料表格（Data Tables）能一鍵擷取重點，並自動排成表格。生成的表格還支援直接匯出到Google Sheets，跨應用寫作更方便了～ 
 
-並且直接存到指定資料夾
-用 Gemini CLI 進行摘要與追問（免費）
-之後還可以加入批次轉錄與摘要的功能
-終於可以來清一清我的 YouTube 待播清單了
+大家快去試試新功能！￼
 
-<https://www.threads.com/@pan_0709/post/DSzxmiYjxQm?xmt=AQF0PoOLNx99wgawOBUVnC_2MQGpPhG4u8Pkl8BFgsCWw0WMv1VhyzIskqs7bmlMcqdgiFw&slof=1>
+<https://www.threads.com/@bnext_official/post/DSoecLnjURz?xmt=AQF0VF_sT0a9maeGgbonjt11DhkLYH--TBp15oyg4KjFVtfH1dihLnjf54DjXKhV1_IcGg03&slof=1>
+
+
+轉換後：
+NotebookLM 又更新了！
+
+全新功能資料表格（Data Tables）能一鍵擷取重點，並自動排成表格。生成的表格還支援直接匯出到 Google Sheets，跨應用寫作更方便了～ 
+
+## 大家快去試試新功能！
+
+source: <https://www.threads.com/@bnext_official/post/DSoecLnjURz?xmt=AQF0VF_sT0a9maeGgbonjt11DhkLYH--TBp15oyg4KjFVtfH1dihLnjf54DjXKhV1_IcGg03&slof=1>
+
+
+應該要的樣子
+NotebookLM 又更新了！
+
+全新功能資料表格（Data Tables）能一鍵擷取重點，並自動排成表格。生成的表格還支援直接匯出到 Google Sheets，跨應用寫作更方便了～ 
+
+大家快去試試新功能！
+
+source: <https://www.threads.com/@bnext_official/post/DSoecLnjURz?xmt=AQF0VF_sT0a9maeGgbonjt11DhkLYH--TBp15oyg4KjFVtfH1dihLnjf54DjXKhV1_IcGg03&slof=1>
