@@ -238,21 +238,30 @@ function transformText(text: string): string {
     const trimmedResult = result.trimEnd();
 
     // 偵測結尾是否為 URL（支援 http 和 https）
+    // 支援 Markdown 自動連結語法 <URL>
     // 使用較寬鬆的匹配：從最後一個 http(s):// 開始到結尾
-    const trailingUrlMatch = trimmedResult.match(/\n?(https?:\/\/[^\s]+)$/);
+    const trailingUrlMatch = trimmedResult.match(/\n?<?((https?:\/\/[^\s<>]+))>?$/);
 
     if (trailingUrlMatch) {
-        const url = trailingUrlMatch[1];
-        // 找到 URL 在 trimmedResult 中的起始位置
-        const urlStartIndex = trimmedResult.lastIndexOf(url);
+        let url = trailingUrlMatch[1];
+        // 移除 URL 結尾可能殘留的 > 字元
+        url = url.replace(/>+$/, '');
+
+        // 找到 URL 在 trimmedResult 中的起始位置（包含可能的 < 前綴）
+        const urlPatternStart = trimmedResult.lastIndexOf(url);
+        // 檢查 URL 前是否有 < 字元
+        const actualStart = (urlPatternStart > 0 && trimmedResult[urlPatternStart - 1] === '<')
+            ? urlPatternStart - 1
+            : urlPatternStart;
+
         // 取得 URL 之前的內容
-        let beforeUrl = trimmedResult.substring(0, urlStartIndex).trimEnd();
+        let beforeUrl = trimmedResult.substring(0, actualStart).trimEnd();
 
         // 組合新格式
         if (beforeUrl.length > 0) {
             // 有其他內文：內文 + 換行 + --- + 換行 + source: URL
-            // 先清理 beforeUrl 結尾的多餘空行和 Markdown 標記（如 ##、>、- 等）
-            beforeUrl = beforeUrl.replace(/[\n\s#>\-*+￼]*$/, '');
+            // 先清理 beforeUrl 結尾的多餘空行和 Markdown 標記（如 ##、>、-、< 等）
+            beforeUrl = beforeUrl.replace(/[\n\s#><\-*+￼]*$/, '');
             result = beforeUrl + '\n---\nsource: ' + url;
         } else {
             // 只有網址：直接 --- + 換行 + source: URL
