@@ -27,17 +27,23 @@ export default async function Command() {
       return;
     }
 
-    // 2.5. If clipboard contains HTML, convert links to Markdown format
-    let processedText = text;
+    // 2.5. Transform text content
+    const transformed = transformText(text);
+
+    // 3. Prepare clipboard content (preserve HTML format if available)
     if (html) {
-      processedText = convertHtmlLinksToMarkdown(html, text);
+      // Transform HTML while preserving link structure
+      const transformedHtml = processHtmlContent(html);
+      await Clipboard.copy({ html: transformedHtml, text: transformed });
+    } else {
+      // Plain text only
+      await Clipboard.copy({ text: transformed });
     }
 
-    // 3. Transform text
-    const transformed = transformText(processedText);
-
-    // 4. Paste back
-    await Clipboard.paste(transformed);
+    // 4. Paste back using AppleScript (preserves HTML format)
+    await runAppleScript(
+      'tell application "System Events" to keystroke "v" using {command down}',
+    );
 
     // 5. Show success message and close
     await showHUD("🎉 轉換成功！ 🎉");
@@ -324,36 +330,24 @@ function transformText(text: string): string {
 }
 
 /**
- * Convert HTML links to Markdown format
- * Transforms <a href="URL">text</a> to [text](URL)
- * @param html HTML content from clipboard
- * @param fallbackText Plain text fallback if conversion fails
- * @returns Markdown formatted text with links
+ * Process HTML content by transforming text inside tags while preserving structure
+ * Transforms text inside <a> tags while preserving the link structure
+ * @param html HTML content from clipboard (e.g., from Heptabase)
+ * @returns Transformed HTML with preserved link structure
  */
-function convertHtmlLinksToMarkdown(html: string, fallbackText: string): string {
-  // Normalize HTML: remove excessive whitespace
-  let cleanHtml = html.replace(/\s+/g, " ").trim();
+function processHtmlContent(html: string): string {
+  // Transform text inside <a> tags while preserving the link
+  return html.replace(
+    /<a\s+([^>]*)>(.*?)<\/a>/gi,
+    (match, attributes, innerText) => {
+      // Remove HTML tags from inner text
+      const plainText = innerText.replace(/<[^>]+>/g, "");
 
-  // Pattern to match <a href="URL">text</a> including images <img> tags
-  const linkPattern =
-    /<a\s+(?:[^>]*?\s+)?href=["']([^"']+)["'][^>]*>(.*?)<\/a>/gi;
+      // Apply transformations to the text
+      const transformed = transformText(plainText);
 
-  let result = cleanHtml;
-
-  // Replace all links with Markdown format
-  result = result.replace(linkPattern, (match, url, linkText) => {
-    // Remove HTML tags inside link text (e.g., <strong>, <em>)
-    const cleanText = linkText.replace(/<[^>]+>/g, "");
-    return `[${cleanText}](${url})`;
-  });
-
-  // Remove remaining HTML tags
-  result = result.replace(/<[^>]+>/g, "");
-
-  // If no links were found, return fallback text
-  if (!result.includes("[") || !result.includes("](")) {
-    return fallbackText;
-  }
-
-  return result;
+      // Reconstruct the link with transformed text
+      return `<a ${attributes}>${transformed}</a>`;
+    },
+  );
 }
