@@ -1,28 +1,5 @@
-轉換前：
-# NotebookLM又更新了！
+🎨 分享 2 個最近很常用的 Design System Prompt 網站
 
-全新功能資料表格（Data Tables）能一鍵擷取重點，並自動排成表格。生成的表格還支援直接匯出到Google Sheets，跨應用寫作更方便了～ 
+實測直接搭配 Gemini  Pro 開啟 Canva 直接 One-Shot 的效果都還不錯，製作 Landing Page 的效率直接拉滿￼
 
-大家快去試試新功能！￼
-
-<https://www.threads.com/@bnext_official/post/DSoecLnjURz?xmt=AQF0VF_sT0a9maeGgbonjt11DhkLYH--TBp15oyg4KjFVtfH1dihLnjf54DjXKhV1_IcGg03&slof=1>
-
-
-轉換後：
-NotebookLM 又更新了！
-
-全新功能資料表格（Data Tables）能一鍵擷取重點，並自動排成表格。生成的表格還支援直接匯出到 Google Sheets，跨應用寫作更方便了～ 
-
-## 大家快去試試新功能！
-
-source: <https://www.threads.com/@bnext_official/post/DSoecLnjURz?xmt=AQF0VF_sT0a9maeGgbonjt11DhkLYH--TBp15oyg4KjFVtfH1dihLnjf54DjXKhV1_IcGg03&slof=1>
-
-
-應該要的樣子
-NotebookLM 又更新了！
-
-全新功能資料表格（Data Tables）能一鍵擷取重點，並自動排成表格。生成的表格還支援直接匯出到 Google Sheets，跨應用寫作更方便了～ 
-
-大家快去試試新功能！
-
-source: <https://www.threads.com/@bnext_official/post/DSoecLnjURz?xmt=AQF0VF_sT0a9maeGgbonjt11DhkLYH--TBp15oyg4KjFVtfH1dihLnjf54DjXKhV1_IcGg03&slof=1>
+https://www.threads.com/@geekaz/post/DSzRp3AEcVg?xmt=AQF0bNrtVoipfy4HCEmW0H9ahh-jNdoUQDk4kdODDSlpXPf0-bamdaGuwEZDLj8NvqqV7SHs&slof=1

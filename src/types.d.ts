@@ -1,7 +1,10 @@
-declare module 'opencc-js' {
-    export function Converter(options: { from: string; to: string }): (text: string) => string;
+declare module "opencc-js" {
+  export function Converter(options: {
+    from: string;
+    to: string;
+  }): (text: string) => string;
 }
 
-declare module 'pangu' {
-    export function spacingText(text: string): string;
+declare module "pangu" {
+  export function spacingText(text: string): string;
 }
