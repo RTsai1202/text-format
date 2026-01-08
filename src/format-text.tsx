@@ -62,7 +62,18 @@ function transformText(text: string): string {
 
   // 2. 保護 URL（包含 <URL> 格式），避免後續處理誤判
   const urlPlaceholders: string[] = [];
-  text = text.replace(/<?(https?:\/\/[^\s<>]+)>?/g, (match) => {
+
+  // 先保護 Markdown 連結（連同圖片語法），支援括號嵌套
+  text = text.replace(
+    /!?\[[^\]]*\]\((?:[^()]|\([^)]*\))*\)/g,
+    (match) => {
+      urlPlaceholders.push(match);
+      return `__URL_PLACEHOLDER_${urlPlaceholders.length - 1}__`;
+    },
+  );
+
+  // 再保護獨立 URL，排除 ) 避免匹配 Markdown 結尾
+  text = text.replace(/<?(https?:\/\/[^\s<>)]+)>?/g, (match) => {
     urlPlaceholders.push(match);
     return `__URL_PLACEHOLDER_${urlPlaceholders.length - 1}__`;
   });
@@ -181,8 +192,8 @@ function transformText(text: string): string {
     };
 
     protect(/`[^`]+`/g); // Inline code
-    protect(/https?:\/\/[^\s]+/g); // URLs
-    protect(/!{0,1}\[[^\]]*\]\([^)]+\)/g); // Links/Images
+    protect(/!?\[[^\]]*\]\((?:[^()]|\([^)]*\))*\)/g); // Links/Images - 優先保護，支援括號嵌套
+    protect(/https?:\/\/[^\s)]+/g); // URLs - 改進，排除 ) 避免匹配 Markdown 結尾
     protect(/<[^>]+>/g); // HTML tags
     protect(/\.{2,}/g); // Consecutive periods (ellipsis-like)
     protect(/[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)+/g); // Alphanumeric sequences with periods (e.g. a.b.c, v1.2.3)

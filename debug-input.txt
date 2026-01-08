@@ -1,5 +1,16 @@
-🎨 分享 2 個最近很常用的 Design System Prompt 網站
+# Markdown 連結保護測試
 
-實測直接搭配 Gemini  Pro 開啟 Canva 直接 One-Shot 的效果都還不錯，製作 Landing Page 的效率直接拉滿￼
+## 案例 1：用戶報告的問題
+[Pattern Interrupt（模式中斷）](https://en.wikipedia.org/wiki/Pattern_interrupt)
 
-https://www.threads.com/@geekaz/post/DSzRp3AEcVg?xmt=AQF0bNrtVoipfy4HCEmW0H9ahh-jNdoUQDk4kdODDSlpXPf0-bamdaGuwEZDLj8NvqqV7SHs&slof=1
+## 案例 2：多個連結在同一段落
+可以查看 [Rode 官網](https://www.rode.com/) 和 [Wikipedia](https://en.wikipedia.org/) 瞭解更多資訊。
+
+## 案例 3：URL 中包含括號（Wikipedia 消歧義）
+[消歧義頁面](https://en.wikipedia.org/wiki/Example_(disambiguation))
+
+## 案例 4：圖片語法
+![測試圖片](https://example.com/image.png)
+
+## 案例 5：獨立 URL（應該被轉為 source 格式）
+https://www.threads.com/@geekaz/post/DSzRp3AEcVg

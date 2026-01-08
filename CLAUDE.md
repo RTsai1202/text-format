@@ -50,9 +50,11 @@ The transformations are applied in this order:
 2. **Garbage Cleanup** (line 55)
    - Removes Object Replacement Character (U+FFFC) and adjacent markdown markers
 
-3. **URL Preservation** (lines 58-62)
-   - Extracts URLs into placeholders to protect from transformations
-   - Pattern: `https?://` anywhere, including `<URL>` syntax
+3. **URL & Link Preservation** (lines 63-79)
+   - **Markdown Links First** (lines 66-73): Protects `[text](URL)` syntax including images `![alt](URL)`
+     - Regex: `/!?\[[^\]]*\]\((?:[^()]|\([^)]*\))*\)/g` - supports nested parentheses in URLs (e.g., Wikipedia disambiguation pages)
+   - **Standalone URLs** (lines 75-79): Protects `https?://...` URLs not part of Markdown syntax
+     - Regex: `/<?(https?:\/\/[^\s<>)]+)>?/g` - excludes `)` to avoid breaking Markdown syntax
 
 4. **Bullet & Markdown Normalization** (lines 64-86)
    - Converts `•` and `・` bullets to `- ` format
@@ -66,7 +68,11 @@ The transformations are applied in this order:
    - **Marker extraction** (lines 119-156): Separates indentation, list markers, and content
    - **Content transformation**:
      - **OpenCC conversion**: Simplified Chinese → Traditional Chinese (cn → tw)
-     - **Protection placeholders**: Wraps inline code, URLs, links, images, and alphanumeric sequences to prevent punctuation changes
+     - **Protection placeholders** (lines 194-199): Protects content from punctuation changes, with **priority order**:
+       1. Inline code: `` `code` ``
+       2. **Markdown links (prioritized)**: `[text](url)` and images `![alt](url)` - with support for nested parentheses
+       3. Standalone URLs: `https://...`
+       4. HTML tags, ellipsis, alphanumeric sequences
      - **Punctuation replacement**: Half-width → full-width (`,` → `，`, `.` → `。`, etc.)
      - **Pangu spacing**: Adds spaces between CJK and ASCII characters
      - **Restoration**: Restores protected content
