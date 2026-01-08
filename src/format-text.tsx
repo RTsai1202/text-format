@@ -19,16 +19,22 @@ export default async function Command() {
     // Wait briefly for the clipboard to update
     await new Promise((resolve) => setTimeout(resolve, 200));
 
-    // 2. Read text from Clipboard
-    const text = await Clipboard.readText();
+    // 2. Read text from Clipboard (including HTML format for rich text links)
+    const { text, html } = await Clipboard.read();
 
     if (!text) {
       await showHUD("No text selected (Clipboard empty)");
       return;
     }
 
+    // 2.5. If clipboard contains HTML, convert links to Markdown format
+    let processedText = text;
+    if (html) {
+      processedText = convertHtmlLinksToMarkdown(html, text);
+    }
+
     // 3. Transform text
-    const transformed = transformText(text);
+    const transformed = transformText(processedText);
 
     // 4. Paste back
     await Clipboard.paste(transformed);
@@ -312,6 +318,41 @@ function transformText(text: string): string {
       // 只有網址：直接 --- + 空行 + source: URL
       result = "---\n\nsource: " + url;
     }
+  }
+
+  return result;
+}
+
+/**
+ * Convert HTML links to Markdown format
+ * Transforms <a href="URL">text</a> to [text](URL)
+ * @param html HTML content from clipboard
+ * @param fallbackText Plain text fallback if conversion fails
+ * @returns Markdown formatted text with links
+ */
+function convertHtmlLinksToMarkdown(html: string, fallbackText: string): string {
+  // Normalize HTML: remove excessive whitespace
+  let cleanHtml = html.replace(/\s+/g, " ").trim();
+
+  // Pattern to match <a href="URL">text</a> including images <img> tags
+  const linkPattern =
+    /<a\s+(?:[^>]*?\s+)?href=["']([^"']+)["'][^>]*>(.*?)<\/a>/gi;
+
+  let result = cleanHtml;
+
+  // Replace all links with Markdown format
+  result = result.replace(linkPattern, (match, url, linkText) => {
+    // Remove HTML tags inside link text (e.g., <strong>, <em>)
+    const cleanText = linkText.replace(/<[^>]+>/g, "");
+    return `[${cleanText}](${url})`;
+  });
+
+  // Remove remaining HTML tags
+  result = result.replace(/<[^>]+>/g, "");
+
+  // If no links were found, return fallback text
+  if (!result.includes("[") || !result.includes("](")) {
+    return fallbackText;
   }
 
   return result;
