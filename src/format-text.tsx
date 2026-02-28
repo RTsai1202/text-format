@@ -7,8 +7,6 @@ import {
 import { runAppleScript } from "@raycast/utils";
 import * as OpenCC from "opencc-js";
 import pangu from "pangu";
-import { writeFileSync } from "fs";
-import { homedir } from "os";
 
 /**
  * 中文數字轉阿拉伯數字（支援 1-99）
@@ -80,40 +78,8 @@ export default async function Command() {
       return;
     }
 
-    // 2.5. Debug: 將輸入和輸出寫入文件
-    const debugFile = `${homedir()}/raycast-debug.txt`;
-    let debugInfo = "=== DEBUG: 原始輸入 ===\n";
-    debugInfo += `text: ${JSON.stringify(text)}\n\n`;
-
-    // 計算連續空行
-    const inputLines = text.split("\n");
-    debugInfo += `總行數: ${inputLines.length}\n`;
-    debugInfo += `空行分布: `;
-    inputLines.forEach((line, idx) => {
-      if (line.trim() === "") debugInfo += `[${idx}] `;
-    });
-    debugInfo += `\n\n`;
-
-    debugInfo += `html 長度: ${html ? html.length : 0}\n`;
-    debugInfo += `html 完整內容:\n${html ? html : "無 HTML"}\n\n`;
-
     // 2.5. Transform text content
     const transformed = transformText(text);
-
-    debugInfo += "=== DEBUG: 轉換後 ===\n";
-    debugInfo += `transformed: ${JSON.stringify(transformed)}\n\n`;
-
-    const outputLines = transformed.split("\n");
-    debugInfo += `轉換後總行數: ${outputLines.length}\n`;
-    debugInfo += `轉換後空行分布: `;
-    outputLines.forEach((line, idx) => {
-      if (line.trim() === "") debugInfo += `[${idx}] `;
-    });
-    debugInfo += `\n\n`;
-
-    debugInfo += `時間: ${new Date().toLocaleString()}\n`;
-
-    writeFileSync(debugFile, debugInfo);
 
     // 3. Prepare clipboard content
     // 智慧判斷：
