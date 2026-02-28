@@ -15,10 +15,14 @@ declare type Preferences = ExtensionPreferences
 declare namespace Preferences {
   /** Preferences accessible in the `format-text` command */
   export type FormatText = ExtensionPreferences & {}
+  /** Preferences accessible in the `mark-done` command */
+  export type MarkDone = ExtensionPreferences & {}
 }
 
 declare namespace Arguments {
   /** Arguments passed to the `format-text` command */
   export type FormatText = {}
+  /** Arguments passed to the `mark-done` command */
+  export type MarkDone = {}
 }
 

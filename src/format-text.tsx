@@ -706,3 +706,35 @@ function generateHtmlFromMarkdown(text: string): string {
 function hasListItems(text: string): boolean {
   return /^\s*(\d+)\.\s+/m.test(text) || /^\s*[-*+]\s+/m.test(text);
 }
+
+/**
+ * Check if HTML contains Heptabase todo list items
+ */
+function hasTodoItems(html: string): boolean {
+  return /data-node-type="todo_list_item"/.test(html);
+}
+
+/**
+ * Extract todo items from Heptabase HTML and format with ✅ prefix
+ * Detects data-node-type="todo_list_item" and extracts text content
+ * Applies transformText to each item for punctuation/OpenCC conversion
+ */
+function processTodoHtml(html: string): string {
+  const lines: string[] = [];
+
+  // Match any <li> containing data-node-type="todo_list_item" (attribute order-independent)
+  const itemRegex =
+    /<li\b[^>]*\bdata-node-type="todo_list_item"\b[^>]*>([\s\S]*?)<\/li>/g;
+
+  let match;
+  while ((match = itemRegex.exec(html)) !== null) {
+    // Strip all HTML tags to get plain text
+    const text = match[1].replace(/<[^>]+>/g, "").trim();
+    if (!text) continue;
+
+    const transformedText = transformText(text);
+    lines.push(`✅ ${transformedText}`);
+  }
+
+  return lines.join("\n");
+}

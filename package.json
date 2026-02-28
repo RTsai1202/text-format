@@ -15,6 +15,12 @@
             "title": "Format Text",
             "description": "Formats selected text",
             "mode": "no-view"
+        },
+        {
+            "name": "mark-done",
+            "title": "Mark Done ✅",
+            "description": "Add ✅ prefix to selected todo items",
+            "mode": "no-view"
         }
     ],
     "dependencies": {
